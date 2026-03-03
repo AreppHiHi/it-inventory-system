@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Inventory Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #334155; }
+        .navbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; }
+        .stat-card { border: none; border-radius: 12px; transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .card-inventory { border: none; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: #4f46e5; border: none; padding: 10px 20px; border-radius: 8px; }
+        .btn-primary:hover { background-color: #4338ca; }
+        .badge-status { border-radius: 20px; padding: 5px 12px; font-weight: 500; }
+        .table thead { background-color: #f1f5f9; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar sticky-top mb-4">
+    <div class="container">
+        <span class="navbar-brand fw-bold text-primary"><i class="fas fa-microchip me-2"></i>IT Inventory <span class="text-dark">Pro</span></span>
+        <div class="d-flex align-items-center">
+            <span class="me-3 text-muted small">Welcome, <strong>{{ current_user.username }}</strong></span>
+            <a href="/logout" class="btn btn-sm btn-outline-danger rounded-pill px-3">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card bg-white p-3 shadow-sm border-start border-primary border-4">
+                <div class="small text-muted fw-bold text-uppercase">Total Assets</div>
+                <div class="h2 fw-bold mb-0">{{ stats.total }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card bg-white p-3 shadow-sm border-start border-success border-4">
+                <div class="small text-muted fw-bold text-uppercase">Hardware Items</div>
+                <div class="h2 fw-bold mb-0">{{ stats.hardware }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card bg-white p-3 shadow-sm border-start border-info border-4">
+                <div class="small text-muted fw-bold text-uppercase">Software Licenses</div>
+                <div class="h2 fw-bold mb-0">{{ stats.software }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card card-inventory p-4 bg-white h-100">
+                <h5 class="fw-bold mb-4"><i class="fas fa-plus-circle text-primary me-2"></i>Quick Entry</h5>
+                <form action="/add" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Device Name</label>
+                        <input type="text" name="name" class="form-control form-control-lg bg-light border-0" placeholder="e.g. Dell Latitude" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Category</label>
+                        <select name="category" class="form-select form-select-lg bg-light border-0">
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Status</label>
+                        <input type="text" name="status" class="form-control form-control-lg bg-light border-0" value="Deployed">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">Add to Inventory</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-lg-8 mb-4">
+            <div class="card card-inventory bg-white p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Live Inventory</h5>
+                    <div class="d-flex gap-2">
+                        <form action="/" method="GET" class="d-flex">
+                            <input type="text" name="search" class="form-control form-control-sm border-light bg-light" placeholder="Search..." value="{{ search }}">
+                            <button class="btn btn-sm btn-light border ms-1"><i class="fas fa-search"></i></button>
+                        </form>
+                        <a href="/export" class="btn btn-sm btn-dark px-3"><i class="fas fa-file-export me-1"></i>Export</a>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle">
+                        <thead>
+                            <tr class="text-muted small text-uppercase">
+                                <th>Item Details</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr class="border-bottom">
+                                <td>
+                                    <div class="fw-bold">{{ item.name }}</div>
+                                    <div class="small text-muted">ID: #{{ item.id }}</div>
+                                </td>
+                                <td><span class="small">{{ item.category }}</span></td>
+                                <td><span class="badge badge-status bg-soft-primary text-primary border border-primary">{{ item.status }}</span></td>
+                                <td class="text-end">
+                                    <a href="/edit/{{ item.id }}" class="btn btn-sm btn-light border me-1"><i class="fas fa-edit text-warning"></i></a>
+                                    <a href="/delete/{{ item.id }}" class="btn btn-sm btn-light border" onclick="return confirm('Delete record?')"><i class="fas fa-trash text-danger"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

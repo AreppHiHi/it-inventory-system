@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Item</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5" style="max-width: 500px;">
+        <div class="card shadow">
+            <div class="card-body">
+                <h4>Edit Item #{{ item.id }}</h4>
+                <form action="/update/{{ item.id }}" method="POST">
+                    <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" value="{{ item.name }}" required></div>
+                    <div class="mb-3"><label>Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Hardware" {% if item.category == 'Hardware' %}selected{% endif %}>Hardware</option>
+                            <option value="Software" {% if item.category == 'Software' %}selected{% endif %}>Software</option>
+                            <option value="Accessories" {% if item.category == 'Accessories' %}selected{% endif %}>Accessories</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label>Status</label><input type="text" name="status" class="form-control" value="{{ item.status }}"></div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="/" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

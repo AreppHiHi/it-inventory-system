@@ -1,9 +1,15 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, send_file, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash
 import sqlite3
 import pandas as pd
-import serverless_wsgi
+from create_db import init_db # Imports your database builder
+
+# --- Auto-Build Database ---
+# This fixes the "no such table" error by building the DB if it's missing
+if not os.path.exists('my_inventory.db'):
+    init_db()
 
 app = Flask(__name__)
 app.secret_key = 'it_student_modern_ui_secret'
@@ -123,14 +129,9 @@ def export_data():
     conn = get_db_connection()
     df = pd.read_sql_query("SELECT * FROM items", conn)
     conn.close()
-    # Save to a temporary directory that Netlify allows writing to
-    file_path = "/tmp/it_inventory_report.csv"
+    file_path = "it_inventory_report.csv"
     df.to_csv(file_path, index=False)
     return send_file(file_path, as_attachment=True, download_name="it_inventory_report.csv")
-
-# --- Netlify Serverless Wrapper ---
-def handler(event, context):
-    return serverless_wsgi.handle_request(app, event, context)
 
 if __name__ == '__main__':
     app.run(debug=True)

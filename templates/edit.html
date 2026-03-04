@@ -7,21 +7,21 @@
 </head>
 <body class="bg-light">
     <div class="container mt-5" style="max-width: 500px;">
-        <div class="card shadow">
-            <div class="card-body">
-                <h4>Edit Item #{{ item.id }}</h4>
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-4">Edit Item #{{ item.id }}</h4>
                 <form action="/update/{{ item.id }}" method="POST">
-                    <div class="mb-3"><label>Name</label><input type="text" name="name" class="form-control" value="{{ item.name }}" required></div>
-                    <div class="mb-3"><label>Category</label>
-                        <select name="category" class="form-select">
+                    <div class="mb-3"><label class="small fw-bold">Name</label><input type="text" name="name" class="form-control bg-light border-0" value="{{ item.name }}" required></div>
+                    <div class="mb-3"><label class="small fw-bold">Category</label>
+                        <select name="category" class="form-select bg-light border-0">
                             <option value="Hardware" {% if item.category == 'Hardware' %}selected{% endif %}>Hardware</option>
                             <option value="Software" {% if item.category == 'Software' %}selected{% endif %}>Software</option>
                             <option value="Accessories" {% if item.category == 'Accessories' %}selected{% endif %}>Accessories</option>
                         </select>
                     </div>
-                    <div class="mb-3"><label>Status</label><input type="text" name="status" class="form-control" value="{{ item.status }}"></div>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <a href="/" class="btn btn-secondary">Cancel</a>
+                    <div class="mb-4"><label class="small fw-bold">Status</label><input type="text" name="status" class="form-control bg-light border-0" value="{{ item.status }}"></div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold mb-2">Save Changes</button>
+                    <a href="/" class="btn btn-light w-100 border">Cancel</a>
                 </form>
             </div>
         </div>
